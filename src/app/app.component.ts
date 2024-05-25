@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { UserService } from './user.service';
 import { User } from './data';
@@ -8,19 +8,19 @@ import { UserInfoComponent } from './user-info/user-info.component';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, UserInfoComponent],
-  template: ` <h1>User Listing</h1>
-  @for (user of userData; track user.id) {
-    <app-user-info [user]="user"/>
-  }
+  template: `
+    <h1>User Listing</h1>
+    @for (user of userData; track user.id) {
+    <app-user-info [user]="user" />
+    }
   `,
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   userService = inject(UserService);
   userData: User[] = [];
 
-  constructor() {
-    this.userService.getUserData().then((data) => {
-      this.userData = data;
-    });
+  async ngOnInit(): Promise<void> {
+    const data = await this.userService.getUserData();
+    this.userData = data;
   }
 }
